@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "455937851891",
+    "firebase_url": "https://tipbatenbis-f978d.firebaseio.com",
+    "project_id": "tipbatenbis-f978d",
+    "storage_bucket": "tipbatenbis-f978d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455937851891:android:8f726334dabf3c42",
+        "android_client_info": {
+          "package_name": "com.hex254.tipbatenbis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "455937851891-306antfq2bhrc2mkvkm32joj5jgqaekl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVDRL9BWozoZ-W6LmcSNQxIm2tI6R3CLM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

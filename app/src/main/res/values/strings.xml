@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">טיפ בתןביס</string>
+    <string name="check">בדוק</string>
+
+    <string name="app_title">טיפ בתןביס?</string>
+    <string name="accepts_tip">מקבלים טיפ בתןביס!</string>
+    <string name="doesnt_accept_tip">לא מקבלים טיפ בתןביס!</string>
+    <string name="unknown_tip_acceptance">אין מידע על טיפים במסעדה זו</string>
+
+    <string name="know_otherwise">יודעים אחרת?</string>
+    <string name="can_ask_waiter">יש מצב שאתם שואלים את המלצר?</string>
+
+    <string name="response_dont_accept">לא מקבלים</string>
+    <string name="response_accept">מקבלים</string>
+    <string name="thanks">תודה רבה!</string>
+    <string name="notInLocation">לא ב</string>
+
+    <string name="haveNoIdea">לא הצלחנו לזהות את מיקומכם, אנא בחרו מהרשימה</string>
+</resources>
