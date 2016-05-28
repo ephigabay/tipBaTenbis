@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private GoogleApiClient mGoogleApiClient;
     Restaurant currentRestaurant;
-    private PlaceLikelihood likeliestPlace;
 
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     DatabaseReference DBPlaceRef = mDatabase.getReference("places");
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
 
     public Restaurant restaurantFromPlaceLikelihood(PlaceLikelihood placeLikelihood) {
         return new Restaurant(placeLikelihood.getPlace().getId(), placeLikelihood.getPlace().getName().toString());
+
     }
 
     public Restaurant restaurantFromPlace(Place place) {
@@ -243,24 +243,11 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
 //                Toast.makeText(getApplicationContext(), "found " + likelyPlaces.getCount(), Toast.LENGTH_LONG).show();
 
                     currentRestaurant = getTopRestaurant(likelyPlaces);
+                    Intent goToResultsIntent = new Intent(MainActivity.this,ResultActivity.class);
+                    goToResultsIntent.putExtra("currResturant",currentRestaurant);
+                    startActivity(goToResultsIntent);
 
-                    if(currentRestaurant != null) {
 
-                        TextView textRestName = (TextView) findViewById(R.id.textRestName);
-                        assert textRestName != null;
-                        textRestName.setText(currentRestaurant.name);
-                        textRestName.setVisibility(View.VISIBLE);
-
-                        ((Button) findViewById(R.id.notInLocationBTN)).setText(getString(R.string.notInLocation) + currentRestaurant.name + "?");
-
-                        findViewById(R.id.findLocationButton).setVisibility(View.INVISIBLE);
-
-                        getPlace(currentRestaurant.place_id);
-                    }
-                    else {
-                        Toast.makeText(MainActivity.this, getString(R.string.haveNoIdea), Toast.LENGTH_LONG).show();
-                        displayAutocomplete();
-                    }
                 /*
                 for (PlaceLikelihood placeLikelihood : likelyPlaces) {
                     Log.i("asdf", String.format("Restaurant '%s' has likelihood: %g",

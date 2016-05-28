@@ -3,7 +3,7 @@ package com.hex254.tipbatenbis;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class Restaurant {
+public class Restaurant implements java.io.Serializable {
 
     public String place_id; // As defined by Google API
     public String name;
