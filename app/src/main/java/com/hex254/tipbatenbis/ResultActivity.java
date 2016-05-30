@@ -23,6 +23,16 @@ import com.google.firebase.database.ValueEventListener;
 public class ResultActivity extends AppCompatActivity {
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     DatabaseReference DBPlaceRef = mDatabase.getReference("places");
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+
+    Restaurant currentRestaurant;
+
+    private void setAcceptsTip(Restaurant restaurant) {
+        DBPlaceRef.child(restaurant.place_id).setValue(restaurant);
+        displayPlaceStatus(restaurant);
+        Toast.makeText(this, getString(R.string.thanks), Toast.LENGTH_SHORT).show();
+        findViewById(R.id.responseView).setVisibility(View.INVISIBLE);
+    }
 
 
     @Override
@@ -31,7 +41,7 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
 
         Intent intentIGotFromMainActivity = getIntent();
-        Restaurant currentRestaurant = ((Restaurant) intentIGotFromMainActivity.getSerializableExtra("currResturant"));
+        currentRestaurant = ((Restaurant) intentIGotFromMainActivity.getSerializableExtra("currResturant"));
 
 
         if(currentRestaurant != null) {
@@ -43,14 +53,43 @@ public class ResultActivity extends AppCompatActivity {
 
             ((Button) findViewById(R.id.notInLocationBTN)).setText(getString(R.string.notInLocation) + currentRestaurant.name + "?");
 
-            findViewById(R.id.findLocationButton).setVisibility(View.INVISIBLE);
-
             getPlace(currentRestaurant.place_id);
         }
         else {
             Toast.makeText(this, getString(R.string.haveNoIdea), Toast.LENGTH_LONG).show();
             displayAutocomplete();
         }
+
+        Button responseAcceptButton = (Button)findViewById(R.id.response_accept);
+        responseAcceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentRestaurant.setAccepts_tenbis_tip(true);
+                setAcceptsTip(currentRestaurant);
+            }
+        });
+
+        Button responseDontAcceptButton = (Button)findViewById(R.id.response_dont_accept);
+        responseDontAcceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentRestaurant.setAccepts_tenbis_tip(false);
+                setAcceptsTip(currentRestaurant);
+            }
+        });
+
+        Button notInLocationBTN = (Button)findViewById(R.id.notInLocationBTN);
+        notInLocationBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                displayAutocomplete();
+
+            }
+
+
+        });
+
     }
 
     protected void getPlace(String place_id) {
@@ -116,7 +155,7 @@ public class ResultActivity extends AppCompatActivity {
                             .setFilter(typeFilter)
                             .build(ResultActivity.this);
 
-//TODO: ***********************************
+
             startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
         } catch (GooglePlayServicesRepairableException e) {
             // TODO: Handle the error.
@@ -139,11 +178,15 @@ public class ResultActivity extends AppCompatActivity {
 
                 ((Button)findViewById(R.id.notInLocationBTN)).setText(getString(R.string.notInLocation) + currentRestaurant.name + "?");
 
-                findViewById(R.id.findLocationButton).setVisibility(View.INVISIBLE);
+                //findViewById(R.id.findLocationButton).setVisibility(View.INVISIBLE);
 
                 getPlace(currentRestaurant.place_id);
             }
         }
+    }
+
+    public Restaurant restaurantFromPlace(Place place) {
+        return new Restaurant(place.getId(), place.getName().toString());
     }
 
 

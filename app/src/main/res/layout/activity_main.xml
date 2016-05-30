@@ -36,29 +36,5 @@
         android:id="@+id/findLocationButton"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/textRestName"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#040bc8"
-        android:visibility="invisible" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/textTip"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#040bc8"
-        android:visibility="invisible" />
-
-
-
-
-
 </LinearLayout>
 

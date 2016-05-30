@@ -35,8 +35,9 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity implements OnConnectionFailedListener {
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 123;
-    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private GoogleApiClient mGoogleApiClient;
+    //TODO: delete(moved to ResultActivity):
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     Restaurant currentRestaurant;
 
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
@@ -131,8 +132,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         });
 
 
-
-        Button responseAcceptButton = (Button)findViewById(R.id.response_accept);
+//TODO: delete(moved to ResultActivity):
+       /* Button responseAcceptButton = (Button)findViewById(R.id.response_accept);
         responseAcceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
             }
 
 
-        });
+        });*/
 
 
     }
