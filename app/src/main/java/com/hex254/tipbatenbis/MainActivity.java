@@ -36,78 +36,10 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 123;
     private GoogleApiClient mGoogleApiClient;
-    //TODO: delete(moved to ResultActivity):
-    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
-    Restaurant currentRestaurant;
 
-    FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    DatabaseReference DBPlaceRef = mDatabase.getReference("places");
-
-    private void setAcceptsTip(Restaurant restaurant) {
-        DBPlaceRef.child(restaurant.place_id).setValue(restaurant);
-        displayPlaceStatus(restaurant);
-        Toast.makeText(MainActivity.this, getString(R.string.thanks), Toast.LENGTH_SHORT).show();
-        findViewById(R.id.responseView).setVisibility(View.INVISIBLE);
-    }
 
     public Restaurant restaurantFromPlaceLikelihood(PlaceLikelihood placeLikelihood) {
         return new Restaurant(placeLikelihood.getPlace().getId(), placeLikelihood.getPlace().getName().toString());
-
-    }
-
-    public Restaurant restaurantFromPlace(Place place) {
-        return new Restaurant(place.getId(), place.getName().toString());
-    }
-
-    protected void getPlace(String place_id) {
-        // /<place_id>/
-        DBPlaceRef.child(place_id).addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // Get user value
-                        Restaurant restaurant = dataSnapshot.getValue(Restaurant.class);
-
-
-                        displayPlaceStatus(restaurant);
-
-                        findViewById(R.id.responseView).setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w("", "getUser:onCancelled", databaseError.toException());
-                    }
-                });
-    }
-
-    private void displayPlaceStatus(Restaurant restaurant) {
-        String tipAvailable;
-        String otherwise;
-
-        if (restaurant == null) {
-            tipAvailable = getString(R.string.unknown_tip_acceptance);
-            otherwise = getString(R.string.can_ask_waiter);
-
-        }
-        else {
-            if (restaurant.getAccepts_tenbis_tip()) {
-                tipAvailable = getString(R.string.accepts_tip);
-            }
-            else {
-                tipAvailable = getString(R.string.doesnt_accept_tip);
-            }
-
-            otherwise = getString(R.string.know_otherwise);
-        }
-
-        TextView textTip = (TextView)findViewById(R.id.textTip);
-        TextView otherwiseMessage = (TextView)findViewById(R.id.otherwiseMessage);
-
-        textTip.setText(tipAvailable);
-        textTip.setVisibility(View.VISIBLE);
-
-        otherwiseMessage.setText(otherwise);
     }
 
     @Override
@@ -132,81 +64,8 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         });
 
 
-//TODO: delete(moved to ResultActivity):
-       /* Button responseAcceptButton = (Button)findViewById(R.id.response_accept);
-        responseAcceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentRestaurant.setAccepts_tenbis_tip(true);
-                setAcceptsTip(currentRestaurant);
-            }
-        });
-
-        Button responseDontAcceptButton = (Button)findViewById(R.id.response_dont_accept);
-        responseDontAcceptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentRestaurant.setAccepts_tenbis_tip(false);
-                setAcceptsTip(currentRestaurant);
-            }
-        });
-
-        Button notInLocationBTN = (Button)findViewById(R.id.notInLocationBTN);
-        notInLocationBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                displayAutocomplete();
-
-            }
-
-
-        });*/
-
-
     }
 
-    private void displayAutocomplete() {
-        try {
-
-            AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                    .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ESTABLISHMENT)
-                    .build();
-
-            Intent intent =
-                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
-                            .setFilter(typeFilter)
-                            .build(MainActivity.this);
-
-
-            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-        } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle the error.
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // TODO: Handle the error.
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlaceAutocomplete.getPlace(this, data);
-                currentRestaurant = restaurantFromPlace(place);
-
-                TextView textRestName = (TextView)findViewById(R.id.textRestName);
-                assert textRestName != null;
-                textRestName.setText(currentRestaurant.name);
-                textRestName.setVisibility(View.VISIBLE);
-
-                ((Button)findViewById(R.id.notInLocationBTN)).setText(getString(R.string.notInLocation) + currentRestaurant.name + "?");
-
-                findViewById(R.id.findLocationButton).setVisibility(View.INVISIBLE);
-
-                getPlace(currentRestaurant.place_id);
-            }
-        }
-    }
 
     private Restaurant getTopRestaurant(PlaceLikelihoodBuffer likelyPlaces) {
         for (PlaceLikelihood placeLikelihood : likelyPlaces) {
@@ -241,20 +100,12 @@ public class MainActivity extends AppCompatActivity implements OnConnectionFaile
         result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
             @Override
             public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
-//                Toast.makeText(getApplicationContext(), "found " + likelyPlaces.getCount(), Toast.LENGTH_LONG).show();
 
-                    currentRestaurant = getTopRestaurant(likelyPlaces);
-                    Intent goToResultsIntent = new Intent(MainActivity.this,ResultActivity.class);
-                    goToResultsIntent.putExtra("currResturant",currentRestaurant);
-                    startActivity(goToResultsIntent);
+                Restaurant currentRestaurant = getTopRestaurant(likelyPlaces);
+                Intent goToResultsIntent = new Intent(MainActivity.this,ResultActivity.class);
+                goToResultsIntent.putExtra("currRestaurant",currentRestaurant);
+                startActivity(goToResultsIntent);
 
-
-                /*
-                for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                    Log.i("asdf", String.format("Restaurant '%s' has likelihood: %g",
-                            placeLikelihood.getPlace().getName(),
-                            placeLikelihood.getLikelihood()));
-                }*/
                 likelyPlaces.release();
             }
         });

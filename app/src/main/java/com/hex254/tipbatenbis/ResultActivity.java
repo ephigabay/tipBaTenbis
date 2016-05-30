@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class ResultActivity extends AppCompatActivity {
+
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
     DatabaseReference DBPlaceRef = mDatabase.getReference("places");
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -41,17 +42,12 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
 
         Intent intentIGotFromMainActivity = getIntent();
-        currentRestaurant = ((Restaurant) intentIGotFromMainActivity.getSerializableExtra("currResturant"));
+        currentRestaurant = ((Restaurant) intentIGotFromMainActivity.getSerializableExtra("currRestaurant"));
 
 
         if(currentRestaurant != null) {
 
-            TextView textRestName = (TextView) findViewById(R.id.textRestName);
-            assert textRestName != null;
-            textRestName.setText(currentRestaurant.name);
-            textRestName.setVisibility(View.VISIBLE);
-
-            ((Button) findViewById(R.id.notInLocationBTN)).setText(getString(R.string.notInLocation) + currentRestaurant.name + "?");
+            displayRestaurantName(currentRestaurant);
 
             getPlace(currentRestaurant.place_id);
         }
@@ -82,9 +78,7 @@ public class ResultActivity extends AppCompatActivity {
         notInLocationBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 displayAutocomplete();
-
             }
 
 
@@ -93,7 +87,6 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     protected void getPlace(String place_id) {
-        // /<place_id>/
         DBPlaceRef.child(place_id).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -157,10 +150,8 @@ public class ResultActivity extends AppCompatActivity {
 
 
             startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-        } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle the error.
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // TODO: Handle the error.
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -171,18 +162,21 @@ public class ResultActivity extends AppCompatActivity {
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 currentRestaurant = restaurantFromPlace(place);
 
-                TextView textRestName = (TextView)findViewById(R.id.textRestName);
-                assert textRestName != null;
-                textRestName.setText(currentRestaurant.name);
-                textRestName.setVisibility(View.VISIBLE);
-
-                ((Button)findViewById(R.id.notInLocationBTN)).setText(getString(R.string.notInLocation) + currentRestaurant.name + "?");
-
-                //findViewById(R.id.findLocationButton).setVisibility(View.INVISIBLE);
+                displayRestaurantName(currentRestaurant);
 
                 getPlace(currentRestaurant.place_id);
             }
         }
+    }
+
+    private void displayRestaurantName(Restaurant restaurant) {
+        TextView textRestName = (TextView)findViewById(R.id.textRestName);
+        assert textRestName != null;
+        textRestName.setText(restaurant.name);
+        textRestName.setVisibility(View.VISIBLE);
+
+        ((Button)findViewById(R.id.notInLocationBTN)).setText(getString(R.string.notInLocation) + restaurant.name + "?");
+
     }
 
     public Restaurant restaurantFromPlace(Place place) {
